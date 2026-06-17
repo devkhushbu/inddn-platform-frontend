@@ -155,7 +155,7 @@ export function BackgroundImage({ mode, refreshToken, pinned, onBgChange }: Back
   if (!current) return null;
 
   return (
-    <div className="absolute inset-0 w-full h-full select-none overflow-hidden -z-10">
+    <div className="absolute inset-0 w-full h-full select-none overflow-hidden z-0">
       <BgLayer bg={current} visible={!fading} isDark={isDark} />
       {next && <BgLayer bg={next} visible={fading} isDark={isDark} />}
 

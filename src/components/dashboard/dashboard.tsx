@@ -2,11 +2,10 @@
 
 import { useState } from "react";
 import {
-  Settings, Sparkles, Eye, EyeOff, LayoutGrid,
-  CloudRain, Grid, RefreshCw, ImageIcon, Palette, Shuffle, GalleryHorizontal,
+  Settings,
+  CloudRain, Grid,
 } from "lucide-react";
 import { BackgroundImage, type BgEntry, type BgMode } from "./background-image";
-import { BgPickerPanel } from "./bg-picker-panel";
 import { SearchBar } from "./search-bar";
 import { Shortcuts } from "./shortcuts";
 import { StatsCard } from "./stats-card";
@@ -14,6 +13,7 @@ import { NewsCard } from "./news-card";
 import { VpnCard } from "./vpn-card";
 import { TrendingCard } from "./trending-card";
 import { WeatherCard } from "./weather-card";
+import { SettingsDialog } from "./settings-dialog";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
 
@@ -21,7 +21,6 @@ type BgStyleMode = "auto" | "gradient" | "image";
 
 export default function Dashboard() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [isBgPickerOpen, setIsBgPickerOpen] = useState(false);
 
   // Visibility states
   const [showStats,    setShowStats]    = useState(true);
@@ -37,21 +36,15 @@ export default function Dashboard() {
   const [pinnedBg,       setPinnedBg]       = useState<BgEntry | null>(null); // null = random
   const [currentBg,      setCurrentBg]      = useState<BgEntry | null>(null); // tracked for picker
 
-  const bgModeOptions: { key: BgStyleMode; label: string; icon: React.ReactNode }[] = [
-    { key: "auto",     label: "Auto",  icon: <Shuffle   className="w-3 h-3" /> },
-    { key: "gradient", label: "Color", icon: <Palette   className="w-3 h-3" /> },
-    { key: "image",    label: "Photo", icon: <ImageIcon className="w-3 h-3" /> },
-  ];
-
   // Derived mode for BackgroundImage component
   const derivedMode: BgMode | undefined =
     bgStyleMode === "auto" ? undefined : bgStyleMode;
 
   return (
-    <div className="relative min-h-screen flex flex-col justify-between overflow-x-hidden font-sans pb-0 bg-background text-foreground">
+    <div className="relative min-h-screen flex flex-col justify-between overflow-x-hidden font-sans pb-0 text-foreground dashboard-root">
 
       {/* Background */}
-      <div className={cn("transition-all duration-500", bgBlur ? "blur-md scale-102" : "")}>
+      <div className={cn("absolute inset-0 z-0 transition-all duration-500", bgBlur ? "blur-md scale-102" : "")}>
         <BackgroundImage
           mode={derivedMode}
           refreshToken={bgRefreshToken}
@@ -60,20 +53,8 @@ export default function Dashboard() {
         />
       </div>
 
-      {/* Background Picker Sheet */}
-      {isBgPickerOpen && (
-        <BgPickerPanel
-          currentBg={currentBg}
-          onSelect={(entry) => {
-            setPinnedBg(entry);          // null = back to random
-            if (entry) setBgStyleMode(entry.mode);
-          }}
-          onClose={() => setIsBgPickerOpen(false)}
-        />
-      )}
 
-      {/* ── Header ───────────────────────────────────────────────────────── */}
-      <header className="w-full flex items-center justify-between px-6 py-4 select-none z-40">
+      <header className="relative w-full flex items-center justify-between px-6 py-4 select-none z-40">
 
         {/* Left: quick links */}
         <div className="flex items-center gap-3.5 text-xs text-foreground/70 font-medium">
@@ -102,15 +83,6 @@ export default function Dashboard() {
           {/* Theme Toggle */}
           <ThemeToggle />
 
-          {/* Wallpaper picker trigger */}
-          <button
-            onClick={() => setIsBgPickerOpen(true)}
-            title="Choose Background"
-            className="p-2.5 rounded-full hover:bg-muted text-foreground/70 hover:text-foreground transition-all duration-200 cursor-pointer"
-            aria-label="Choose Background"
-          >
-            <GalleryHorizontal className="w-4.5 h-4.5" />
-          </button>
 
           {/* Grid launcher */}
           <button
@@ -137,127 +109,25 @@ export default function Dashboard() {
               <Settings className={cn("w-4.5 h-4.5 transition-transform duration-500", isSettingsOpen ? "rotate-90" : "hover:rotate-45")} />
             </button>
 
-            {/* Settings Dropdown */}
-            {isSettingsOpen && (
-              <>
-                <div className="fixed inset-0 z-40" onClick={() => setIsSettingsOpen(false)} />
-                <div className="absolute right-0 mt-3 w-64 bg-popover border border-border text-popover-foreground backdrop-blur-2xl rounded-2xl p-4 shadow-2xl z-50 animate-fade-in">
-                  <div className="flex items-center gap-2 border-b border-border/40 pb-2.5 mb-3">
-                    <LayoutGrid className="w-4 h-4 text-primary" />
-                    <h3 className="text-xs font-bold tracking-wider uppercase text-popover-foreground">
-                      Customize Page
-                    </h3>
-                  </div>
-
-                  <div className="flex flex-col gap-3">
-
-                    {/* Card visibility toggles */}
-                    {(
-                      [
-                        ["Stats Card",     showStats,    setShowStats],
-                        ["News Card",      showNews,     setShowNews],
-                        ["VPN Card",       showVpn,      setShowVpn],
-                        ["Trending Card",  showTrending, setShowTrending],
-                        ["Weather Widget", showWeather,  setShowWeather],
-                      ] as [string, boolean, (v: boolean) => void][]
-                    ).map(([label, value, setter]) => (
-                      <div key={label} className="flex items-center justify-between text-xs">
-                        <span className="text-popover-foreground/80 font-light flex items-center gap-2">
-                          {value
-                            ? <Eye    className="w-3.5 h-3.5" />
-                            : <EyeOff className="w-3.5 h-3.5 text-popover-foreground/40" />}
-                          {label}
-                        </span>
-                        <button
-                          onClick={() => setter(!value)}
-                          className={cn("w-8 h-4.5 rounded-full p-0.5 transition-colors cursor-pointer", value ? "bg-primary" : "bg-muted")}
-                        >
-                          <div className={cn("w-3.5 h-3.5 rounded-full bg-background transition-transform", value ? "translate-x-3.5" : "translate-x-0")} />
-                        </button>
-                      </div>
-                    ))}
-
-                    {/* Background style controls */}
-                    <div className="flex flex-col gap-2 border-t border-border/40 pt-3">
-                      <span className="text-[10px] text-popover-foreground/50 uppercase tracking-widest font-semibold flex items-center gap-1.5">
-                        <Sparkles className="w-3 h-3 text-amber-400" />
-                        Background Style
-                      </span>
-
-                      {/* Auto / Color / Photo pills */}
-                      <div className="flex gap-1.5">
-                        {bgModeOptions.map(({ key, label, icon }) => (
-                          <button
-                            key={key}
-                            onClick={() => { setBgStyleMode(key); setPinnedBg(null); }}
-                            className={cn(
-                              "flex-1 flex items-center justify-center gap-1 py-1.5 rounded-lg text-[10px] font-semibold border transition-all cursor-pointer",
-                              bgStyleMode === key
-                                ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                                : "bg-muted/50 text-popover-foreground/60 border-border/30 hover:bg-muted"
-                            )}
-                          >
-                            {icon}{label}
-                          </button>
-                        ))}
-                      </div>
-
-                      {/* Open picker */}
-                      <button
-                        onClick={() => { setIsSettingsOpen(false); setIsBgPickerOpen(true); }}
-                        className="flex items-center justify-center gap-1.5 w-full py-1.5 rounded-lg text-[10px] font-semibold bg-muted/40 hover:bg-muted border border-border/30 text-popover-foreground/70 hover:text-popover-foreground transition-all cursor-pointer group"
-                      >
-                        <ImageIcon className="w-3 h-3" />
-                        Choose Photo / Colour…
-                      </button>
-
-                      {/* Refresh */}
-                      <button
-                        onClick={() => { setPinnedBg(null); setBgRefreshToken(t => t + 1); }}
-                        className="flex items-center justify-center gap-1.5 w-full py-1.5 rounded-lg text-[10px] font-semibold bg-muted/40 hover:bg-muted border border-border/30 text-popover-foreground/70 hover:text-popover-foreground transition-all cursor-pointer group"
-                      >
-                        <RefreshCw className="w-3 h-3 group-hover:rotate-180 transition-transform duration-500" />
-                        Shuffle Background
-                      </button>
-
-                      {/* Show pinned name */}
-                      {pinnedBg && (
-                        <div className="flex items-center justify-between text-[10px] text-muted-foreground bg-muted/30 border border-border/20 rounded-lg px-2.5 py-1.5">
-                          <span className="truncate">📌 {pinnedBg.label ?? "Custom"}</span>
-                          <button
-                            onClick={() => setPinnedBg(null)}
-                            className="text-muted-foreground hover:text-destructive transition-colors cursor-pointer ml-2 shrink-0"
-                          >
-                            ✕
-                          </button>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Blur toggle */}
-                    <div className="flex items-center justify-between text-xs border-t border-border/40 pt-2.5">
-                      <span className="text-popover-foreground/80 font-light flex items-center gap-2">
-                        <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                        Blur Background
-                      </span>
-                      <button
-                        onClick={() => setBgBlur(!bgBlur)}
-                        className={cn("w-8 h-4.5 rounded-full p-0.5 transition-colors cursor-pointer", bgBlur ? "bg-primary" : "bg-muted")}
-                      >
-                        <div className={cn("w-3.5 h-3.5 rounded-full bg-background transition-transform", bgBlur ? "translate-x-3.5" : "translate-x-0")} />
-                      </button>
-                    </div>
-
-                  </div>
-                </div>
-              </>
-            )}
+            <SettingsDialog
+              open={isSettingsOpen}
+              onOpenChange={setIsSettingsOpen}
+              showStats={showStats} setShowStats={setShowStats}
+              showNews={showNews} setShowNews={setShowNews}
+              showVpn={showVpn} setShowVpn={setShowVpn}
+              showTrending={showTrending} setShowTrending={setShowTrending}
+              showWeather={showWeather} setShowWeather={setShowWeather}
+              bgBlur={bgBlur} setBgBlur={setBgBlur}
+              bgStyleMode={bgStyleMode} setBgStyleMode={setBgStyleMode}
+              setPinnedBg={setPinnedBg} setBgRefreshToken={setBgRefreshToken}
+              currentBg={currentBg}
+            />
           </div>
         </div>
       </header>
 
       {/* ── Main ─────────────────────────────────────────────────────────── */}
-      <main className="flex-1 flex flex-col justify-center items-center gap-6 py-6 sm:py-8 z-10 w-full max-w-4xl mx-auto px-4">
+      <main className="relative flex-1 flex flex-col justify-center items-center gap-6 py-6 sm:py-8 z-10 w-full max-w-4xl mx-auto px-4">
         <div className="flex flex-col items-center select-none text-center mb-2 animate-fade-in">
           <h1 className="text-4xl sm:text-5xl md:text-[54px] font-black tracking-tight drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)] bg-gradient-to-r from-orange-500 via-foreground to-emerald-500 text-transparent bg-clip-text">
             INDDN
@@ -271,7 +141,7 @@ export default function Dashboard() {
       </main>
 
       {/* ── Footer / Widgets ─────────────────────────────────────────────── */}
-      <footer className="w-full z-10 mt-6 sm:mt-10">
+      <footer className="relative w-full z-10 mt-6 sm:mt-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl mx-auto px-4 pb-8">
           {showStats    && <StatsCard />}
           {showNews     && <NewsCard />}
