@@ -262,11 +262,16 @@ export function SettingsDialog({
   currentBg,
 }: SettingsDialogProps) {
 
-  const { resolvedTheme } = useTheme();
+  const { theme, setTheme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = React.useState(false);
   const isDark = resolvedTheme !== "light";
   const [bgPickerTab, setBgPickerTab] = React.useState<"image" | "gradient">("image");
   const bgImages    = isDark ? DARK_IMAGES    : LIGHT_IMAGES;
   const bgGradients = isDark ? DARK_GRADIENTS : LIGHT_GRADIENTS;
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Search settings
   const [searchRegion, setSearchRegion] = React.useState<"in" | "com">("in");
@@ -278,7 +283,6 @@ export function SettingsDialog({
   const [searchLang, setSearchLang] = React.useState<"en" | "hi" | "both">("both");
 
   // Appearance
-  const [theme, setTheme] = React.useState<"light" | "dark" | "system">("dark");
   const [fontSize, setFontSize] = React.useState<"sm" | "md" | "lg">("md");
   const [density, setDensity] = React.useState<"compact" | "default" | "comfortable">("default");
   const [animations, setAnimations] = React.useState(true);
@@ -314,6 +318,8 @@ export function SettingsDialog({
 
   const deleteHistory = (id: number) =>
     setHistoryItems((prev) => prev.filter((h) => h.id !== id));
+
+  if (!mounted) return null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -377,7 +383,7 @@ export function SettingsDialog({
           </div>
 
           {/* Content */}
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto custom-scrollbar pr-1">
 
             {/* ── SEARCH SETTINGS ─────────────────────── */}
             <TabsContent value="settings" className="mt-0 p-5 space-y-5 outline-none">
@@ -547,7 +553,7 @@ export function SettingsDialog({
               </Card>
 
               <SectionLabel>Background</SectionLabel>
-              <Card>
+              <Card className={cn(!isDark && "opacity-45 pointer-events-none select-none")}>
                 <div className="p-4 space-y-3">
                   <p className="text-[11px] text-muted-foreground/70 font-semibold uppercase tracking-widest">Background Style</p>
                   <div className="grid grid-cols-3 gap-2">
@@ -584,127 +590,141 @@ export function SettingsDialog({
                     </span>
                   </div>
                 </div>
-                <button
-                  onClick={() => { setPinnedBg(null); setBgRefreshToken((t) => t + 1); }}
-                  className="flex items-center gap-1.5 text-[11px] font-semibold bg-muted hover:bg-accent border border-border/40 text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-full transition-all"
-                >
-                  <Shuffle className="w-3 h-3" /> Random
-                </button>
               </div>
 
-              {/* Style mode */}
-              <div className="grid grid-cols-3 gap-2">
-                {(["auto", "gradient", "image"] as const).map((mode) => (
-                  <button key={mode} onClick={() => { setBgStyleMode(mode); setPinnedBg(null); }}
-                    className={cn("rounded-lg py-2.5 text-[12px] font-semibold border transition-all capitalize",
-                      bgStyleMode === mode ? "bg-primary text-primary-foreground border-primary shadow-sm" : "bg-muted/60 text-muted-foreground border-transparent hover:bg-muted hover:text-foreground"
-                    )}>{mode}
+              {!isDark && (
+                <div className="flex gap-3 rounded-xl border border-amber-500/20 bg-amber-500/10 p-4 text-[12.5px] text-amber-800 dark:text-amber-300 leading-normal">
+                  <Info className="h-5 w-5 shrink-0 text-amber-600 dark:text-amber-400 mt-0.5" />
+                  <div>
+                    <span className="font-semibold">Light Mode Active:</span> Background wallpapers and custom colors are disabled in Light Mode to ensure high contrast, readability, and a clean interface. Switch to Dark Mode to customize.
+                  </div>
+                </div>
+              )}
+
+              <div className={cn("space-y-5 transition-all duration-300", !isDark && "opacity-45 pointer-events-none select-none")}>
+                <div className="flex justify-end">
+                  <button
+                    onClick={() => { setPinnedBg(null); setBgRefreshToken((t) => t + 1); }}
+                    className="flex items-center gap-1.5 text-[11px] font-semibold bg-muted hover:bg-accent border border-border/40 text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-full transition-all"
+                  >
+                    <Shuffle className="w-3 h-3" /> Random
                   </button>
-                ))}
-              </div>
-
-              {/* Tabs: Photos / Colours */}
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setBgPickerTab("image")}
-                  className={cn(
-                    "flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold border transition-all",
-                    bgPickerTab === "image"
-                      ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                      : "bg-muted text-muted-foreground border-border/30 hover:bg-accent"
-                  )}
-                >
-                  <Images className="w-3.5 h-3.5" />
-                  Photos <span className="opacity-60 font-normal">({bgImages.length})</span>
-                </button>
-                <button
-                  onClick={() => setBgPickerTab("gradient")}
-                  className={cn(
-                    "flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold border transition-all",
-                    bgPickerTab === "gradient"
-                      ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                      : "bg-muted text-muted-foreground border-border/30 hover:bg-accent"
-                  )}
-                >
-                  <Palette className="w-3.5 h-3.5" />
-                  Colours <span className="opacity-60 font-normal">({bgGradients.length})</span>
-                </button>
-              </div>
-
-              {/* Photos grid */}
-              {bgPickerTab === "image" && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  {bgImages.map((img) => {
-                    const isActive = currentBg?.value === img.value;
-                    return (
-                      <button
-                        key={img.value}
-                        onClick={() => {
-                          setPinnedBg({ mode: "image", value: img.value, label: img.label });
-                          setBgStyleMode("image");
-                        }}
-                        className={cn(
-                          "relative group rounded-xl overflow-hidden aspect-video cursor-pointer border-2 transition-all duration-200 shadow-md",
-                          isActive ? "border-primary shadow-primary/30 scale-[1.03]" : "border-transparent hover:border-border hover:scale-[1.01] hover:shadow-lg"
-                        )}
-                      >
-                        <Image src={img.value} alt={img.label} fill unoptimized
-                          className={cn("object-cover transition-transform duration-300 group-hover:scale-105", isDark ? "brightness-90" : "brightness-105 saturate-110")}
-                        />
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-all duration-200" />
-                        <span className="absolute bottom-0 left-0 right-0 px-2 py-1.5 bg-gradient-to-t from-black/70 to-transparent text-[10px] text-white font-semibold tracking-wide truncate text-left">
-                          {img.label}
-                        </span>
-                        {isActive && (
-                          <div className="absolute top-2 right-2 w-5 h-5 bg-primary rounded-full flex items-center justify-center shadow-md">
-                            <Check className="w-3 h-3 text-primary-foreground" />
-                          </div>
-                        )}
-                      </button>
-                    );
-                  })}
                 </div>
-              )}
 
-              {/* Gradients grid */}
-              {bgPickerTab === "gradient" && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  {bgGradients.map((g) => {
-                    const isActive = currentBg?.value === g.value;
-                    return (
-                      <button
-                        key={g.value}
-                        onClick={() => {
-                          setPinnedBg({ mode: "gradient", value: g.value, label: g.label });
-                          setBgStyleMode("gradient");
-                        }}
-                        className={cn(
-                          "relative group rounded-xl overflow-hidden aspect-video cursor-pointer border-2 transition-all duration-200 shadow-md",
-                          isActive ? "border-primary shadow-primary/30 scale-[1.03]" : "border-transparent hover:border-border hover:scale-[1.01] hover:shadow-lg"
-                        )}
-                        style={{ background: g.value }}
-                      >
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-200" />
-                        <span className="absolute bottom-0 left-0 right-0 px-2 py-1.5 bg-gradient-to-t from-black/60 to-transparent text-[10px] text-white font-semibold tracking-wide text-left">
-                          {g.label}
-                        </span>
-                        {isActive && (
-                          <div className="absolute top-2 right-2 w-5 h-5 bg-primary rounded-full flex items-center justify-center shadow-md">
-                            <Check className="w-3 h-3 text-primary-foreground" />
-                          </div>
-                        )}
-                      </button>
-                    );
-                  })}
+                {/* Style mode */}
+                <div className="grid grid-cols-3 gap-2">
+                  {(["auto", "gradient", "image"] as const).map((mode) => (
+                    <button key={mode} onClick={() => { setBgStyleMode(mode); setPinnedBg(null); }}
+                      className={cn("rounded-lg py-2.5 text-[12px] font-semibold border transition-all capitalize",
+                        bgStyleMode === mode ? "bg-primary text-primary-foreground border-primary shadow-sm" : "bg-muted/60 text-muted-foreground border-transparent hover:bg-muted hover:text-foreground"
+                      )}>{mode}
+                    </button>
+                  ))}
                 </div>
-              )}
 
-              {/* Blur */}
-              <Card>
-                <SettingRow label="Blur background" description="Apply a soft blur effect to the wallpaper">
-                  <Switch checked={bgBlur} onChange={() => setBgBlur(!bgBlur)} />
-                </SettingRow>
-              </Card>
+                {/* Tabs: Photos / Colours */}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setBgPickerTab("image")}
+                    className={cn(
+                      "flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold border transition-all",
+                      bgPickerTab === "image"
+                        ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                        : "bg-muted text-muted-foreground border-border/30 hover:bg-accent"
+                    )}
+                  >
+                    <Images className="w-3.5 h-3.5" />
+                    Photos <span className="opacity-60 font-normal">({bgImages.length})</span>
+                  </button>
+                  <button
+                    onClick={() => setBgPickerTab("gradient")}
+                    className={cn(
+                      "flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold border transition-all",
+                      bgPickerTab === "gradient"
+                        ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                        : "bg-muted text-muted-foreground border-border/30 hover:bg-accent"
+                    )}
+                  >
+                    <Palette className="w-3.5 h-3.5" />
+                    Colours <span className="opacity-60 font-normal">({bgGradients.length})</span>
+                  </button>
+                </div>
+
+                {/* Photos grid */}
+                {bgPickerTab === "image" && (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {bgImages.map((img) => {
+                      const isActive = currentBg?.value === img.value;
+                      return (
+                        <button
+                          key={img.value}
+                          onClick={() => {
+                            setPinnedBg({ mode: "image", value: img.value, label: img.label });
+                            setBgStyleMode("image");
+                          }}
+                          className={cn(
+                            "relative group rounded-xl overflow-hidden aspect-video cursor-pointer border-2 transition-all duration-200 shadow-md",
+                            isActive ? "border-primary shadow-primary/30 scale-[1.03]" : "border-transparent hover:border-border hover:scale-[1.01] hover:shadow-lg"
+                          )}
+                        >
+                          <Image src={img.value} alt={img.label} fill unoptimized
+                            className={cn("object-cover transition-transform duration-300 group-hover:scale-105", isDark ? "brightness-90" : "brightness-105 saturate-110")}
+                          />
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-all duration-200" />
+                          <span className="absolute bottom-0 left-0 right-0 px-2 py-1.5 bg-gradient-to-t from-black/70 to-transparent text-[10px] text-white font-semibold tracking-wide truncate text-left">
+                            {img.label}
+                          </span>
+                          {isActive && (
+                            <div className="absolute top-2 right-2 w-5 h-5 bg-primary rounded-full flex items-center justify-center shadow-md">
+                              <Check className="w-3 h-3 text-primary-foreground" />
+                            </div>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* Gradients grid */}
+                {bgPickerTab === "gradient" && (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {bgGradients.map((g) => {
+                      const isActive = currentBg?.value === g.value;
+                      return (
+                        <button
+                          key={g.value}
+                          onClick={() => {
+                            setPinnedBg({ mode: "gradient", value: g.value, label: g.label });
+                            setBgStyleMode("gradient");
+                          }}
+                          className={cn(
+                            "relative group rounded-xl overflow-hidden aspect-video cursor-pointer border-2 transition-all duration-200 shadow-md",
+                            isActive ? "border-primary shadow-primary/30 scale-[1.03]" : "border-transparent hover:border-border hover:scale-[1.01] hover:shadow-lg"
+                          )}
+                          style={{ background: g.value }}
+                        >
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-200" />
+                          <span className="absolute bottom-0 left-0 right-0 px-2 py-1.5 bg-gradient-to-t from-black/60 to-transparent text-[10px] text-white font-semibold tracking-wide text-left">
+                            {g.label}
+                          </span>
+                          {isActive && (
+                            <div className="absolute top-2 right-2 w-5 h-5 bg-primary rounded-full flex items-center justify-center shadow-md">
+                              <Check className="w-3 h-3 text-primary-foreground" />
+                            </div>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* Blur */}
+                <Card>
+                  <SettingRow label="Blur background" description="Apply a soft blur effect to the wallpaper">
+                    <Switch checked={bgBlur} onChange={() => setBgBlur(!bgBlur)} />
+                  </SettingRow>
+                </Card>
+              </div>
             </TabsContent>
 
             {/* ── HISTORY ──────────────────────────────── */}

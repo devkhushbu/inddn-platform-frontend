@@ -19,7 +19,7 @@ export function TrendingCard() {
   };
 
   return (
-    <div className="flex flex-col bg-card/45 backdrop-blur-md border border-border/40 p-5 sm:p-6 rounded-2xl shadow-lg shadow-black/25 flex-1 min-h-[140px] text-card-foreground select-none transition-all duration-300 hover:border-border/60 hover:shadow-xl hover:bg-card/55">
+    <div className="flex flex-col bg-card/45 backdrop-blur-md border border-border/40 p-5 sm:p-6 rounded-2xl shadow-sm dark:shadow-lg dark:shadow-black/25 flex-1 min-h-[140px] text-card-foreground select-none transition-all duration-300 hover:border-border/60 hover:shadow-md dark:hover:shadow-xl hover:bg-card/55">
       {/* Title */}
       <h2 className="text-[10px] sm:text-xs font-extrabold uppercase tracking-widest text-muted-foreground mb-4">
         TRENDING SEARCHES

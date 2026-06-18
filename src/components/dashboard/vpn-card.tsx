@@ -8,7 +8,7 @@ export function VpnCard() {
   const [activeTab, setActiveTab] = useState(0);
 
   return (
-    <div className="flex bg-card/45 backdrop-blur-md border border-border/40 rounded-2xl shadow-lg shadow-black/25 overflow-hidden flex-1 text-card-foreground select-none transition-all duration-300 hover:border-border/60 hover:shadow-xl hover:bg-card/55">
+    <div className="flex bg-card/45 backdrop-blur-md border border-border/40 rounded-2xl shadow-sm dark:shadow-lg dark:shadow-black/25 overflow-hidden flex-1 text-card-foreground select-none transition-all duration-300 hover:border-border/60 hover:shadow-md dark:hover:shadow-xl hover:bg-card/55">
       
       {/* Left Sidebar using shadcn styles */}
       <div className="w-12 bg-muted/30 flex flex-col items-center gap-4 py-4 border-r border-border/20 shrink-0">

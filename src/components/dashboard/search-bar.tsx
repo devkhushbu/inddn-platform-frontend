@@ -46,7 +46,7 @@ export function SearchBar() {
         <div className="absolute -inset-0.5 bg-linear-to-r from-primary/10 to-secondary/10 rounded-full blur opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition duration-500" />
         
         {/* Inner search box */}
-        <div className="relative flex items-center bg-card/45 backdrop-blur-xl border border-border/40 hover:border-border/60 group-focus-within:border-ring group-focus-within:bg-card rounded-full px-5 py-3 h-[50px] shadow-lg shadow-black/30 transition-all duration-300">
+        <div className="relative flex items-center bg-card/45 backdrop-blur-xl border border-border/40 hover:border-border/60 group-focus-within:border-ring group-focus-within:bg-card rounded-full px-5 py-3 h-[50px] shadow-sm hover:shadow-md group-focus-within:shadow-md dark:shadow-black/30 transition-all duration-300">
           <div className="flex items-center gap-3 w-full">
             {/* Google G Icon */}
             <GoogleLogo />

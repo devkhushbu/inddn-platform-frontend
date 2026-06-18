@@ -198,14 +198,14 @@ export function Shortcuts() {
                 >
                   {/* Glass Card Container using shadcn/ui colors */}
                   <div className={cn(
-                    "w-11 h-11 sm:w-11.5 sm:h-11.5 rounded-xl flex items-center justify-center transition-all duration-300 shadow-md backdrop-blur-md",
+                    "w-11 h-11 sm:w-11.5 sm:h-11.5 rounded-xl flex items-center justify-center transition-all duration-300 shadow-sm hover:shadow-md dark:shadow-md dark:hover:shadow-lg backdrop-blur-md",
                     "hover:scale-105 hover:shadow-lg active:scale-95 group-focus-visible:ring-1.5 group-focus-visible:ring-ring group-focus-visible:ring-offset-1",
                     item.cardClass || "bg-card/30 hover:bg-card/45 border border-border/25"
                   )}>
                     {item.icon}
                   </div>
                   {/* Label using shadcn/ui text color */}
-                  <span className="text-[10px] sm:text-[10.5px] text-card-foreground/85 font-medium tracking-wide truncate w-full px-1 drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)] group-hover:text-card-foreground transition-colors">
+                  <span className="text-[10px] sm:text-[10.5px] text-card-foreground/85 font-medium tracking-wide truncate w-full px-1 dark:drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)] group-hover:text-card-foreground transition-colors">
                     {item.name}
                   </span>
                 </a>

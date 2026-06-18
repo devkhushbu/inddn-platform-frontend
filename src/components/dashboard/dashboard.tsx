@@ -15,12 +15,14 @@ import { TrendingCard } from "./trending-card";
 import { WeatherCard } from "./weather-card";
 import { SettingsDialog } from "./settings-dialog";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { AppsLauncher } from "./apps-launcher";
 import { cn } from "@/lib/utils";
 
 type BgStyleMode = "auto" | "gradient" | "image";
 
 export default function Dashboard() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isAppsOpen, setIsAppsOpen] = useState(false);
 
   // Visibility states
   const [showStats,    setShowStats]    = useState(true);
@@ -62,11 +64,11 @@ export default function Dashboard() {
             href="https://mail.google.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-foreground hover:underline transition-all cursor-pointer drop-shadow-sm"
+            className="hover:text-foreground hover:underline transition-all cursor-pointer dark:drop-shadow-sm"
           >
             Gmail
           </a>
-          <a href="#" className="hover:text-foreground hover:underline transition-all cursor-pointer drop-shadow-sm">
+          <a href="#" className="hover:text-foreground hover:underline transition-all cursor-pointer dark:drop-shadow-sm">
             Images
           </a>
         </div>
@@ -85,12 +87,21 @@ export default function Dashboard() {
 
 
           {/* Grid launcher */}
-          <button
-            className="p-2.5 rounded-full hover:bg-muted text-foreground/70 hover:text-foreground transition-all duration-200 cursor-pointer"
-            aria-label="Apps"
-          >
-            <Grid className="w-4.5 h-4.5" />
-          </button>
+          <div className="relative">
+            <button
+              onClick={() => setIsAppsOpen(!isAppsOpen)}
+              className={cn(
+                "p-2.5 rounded-full transition-all duration-300 cursor-pointer border",
+                isAppsOpen 
+                  ? "bg-primary/10 border-primary/20 text-primary shadow-inner scale-95"
+                  : "bg-transparent border-transparent hover:bg-muted text-foreground/70 hover:text-foreground hover:scale-105"
+              )}
+              aria-label="Apps"
+            >
+              <Grid className="w-4.5 h-4.5" />
+            </button>
+            <AppsLauncher open={isAppsOpen} onOpenChange={setIsAppsOpen} />
+          </div>
 
           {/* Avatar */}
           <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-orange-500 via-card to-emerald-500 p-[1.5px] shadow-md cursor-pointer hover:scale-105 transition-transform duration-300">
@@ -129,10 +140,10 @@ export default function Dashboard() {
       {/* ── Main ─────────────────────────────────────────────────────────── */}
       <main className="relative flex-1 flex flex-col justify-center items-center gap-6 py-6 sm:py-8 z-10 w-full max-w-4xl mx-auto px-4">
         <div className="flex flex-col items-center select-none text-center mb-2 animate-fade-in">
-          <h1 className="text-4xl sm:text-5xl md:text-[54px] font-black tracking-tight drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)] bg-gradient-to-r from-orange-500 via-foreground to-emerald-500 text-transparent bg-clip-text">
+          <h1 className="text-4xl sm:text-5xl md:text-[54px] font-black tracking-tight dark:drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)] bg-gradient-to-r from-orange-500 via-foreground to-emerald-500 text-transparent bg-clip-text">
             INDDN
           </h1>
-          <span className="text-[9px] sm:text-[10px] text-foreground/50 tracking-[0.2em] font-extrabold uppercase mt-1 drop-shadow-sm">
+          <span className="text-[9px] sm:text-[10px] text-foreground/50 tracking-[0.2em] font-extrabold uppercase mt-1 dark:drop-shadow-sm">
             Search Engine
           </span>
         </div>

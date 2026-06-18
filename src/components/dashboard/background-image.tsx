@@ -152,6 +152,10 @@ export function BackgroundImage({ mode, refreshToken, pinned, onBgChange }: Back
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, pinned, isDark]);
 
+  if (!isDark) {
+    return <div className="absolute inset-0 w-full h-full bg-background" />;
+  }
+
   if (!current) return null;
 
   return (
