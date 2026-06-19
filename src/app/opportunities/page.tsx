@@ -27,11 +27,11 @@ export default function OpportunitiesPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col font-sans selection:bg-primary/20 selection:text-primary">
-      {/* Ambient background glows */}
+      {/* Ambient background glows - OPTIMIZED FOR PERFORMANCE */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute -top-40 -left-40 w-96 h-96 bg-primary/10 rounded-full blur-[100px]" />
-        <div className="absolute top-1/2 -right-40 w-96 h-96 bg-emerald-500/10 rounded-full blur-[100px]" />
-        <div className="absolute -bottom-40 left-1/3 w-96 h-96 bg-orange-500/10 rounded-full blur-[100px]" />
+        <div className="absolute -top-40 -left-40 w-96 h-96 bg-[radial-gradient(circle_at_center,var(--tw-gradient-stops))] from-primary/20 to-transparent rounded-full opacity-60" />
+        <div className="absolute top-1/2 -right-40 w-96 h-96 bg-[radial-gradient(circle_at_center,var(--tw-gradient-stops))] from-emerald-500/20 to-transparent rounded-full opacity-60" />
+        <div className="absolute -bottom-40 left-1/3 w-96 h-96 bg-[radial-gradient(circle_at_center,var(--tw-gradient-stops))] from-orange-500/20 to-transparent rounded-full opacity-60" />
       </div>
 
       {/* Header */}
