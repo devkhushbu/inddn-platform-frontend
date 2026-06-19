@@ -95,8 +95,25 @@ export function Shortcuts() {
     </div>
   );
 
+  // Opportunities Badge: Gradient squircle with target icon
+  const OpportunitiesBadge = () => (
+    <div className="w-5.5 h-5.5 sm:w-6.5 sm:h-6.5 bg-gradient-to-tr from-orange-500 via-primary to-emerald-500 rounded-md flex items-center justify-center shadow-sm">
+      <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-white" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="10" fill="none" stroke="white" strokeWidth="2" />
+        <circle cx="12" cy="12" r="6" fill="none" stroke="white" strokeWidth="2" />
+        <circle cx="12" cy="12" r="2" fill="white" />
+      </svg>
+    </div>
+  );
+
   const pages: Shortcut[][] = [
     [
+      {
+        name: "Opportunities",
+        url: "/opportunities",
+        icon: <OpportunitiesBadge />,
+        cardClass: "bg-foreground/5 hover:bg-foreground/10 border-primary/20 shadow-inner",
+      },
       {
         name: "GitHub",
         url: "https://github.com",
