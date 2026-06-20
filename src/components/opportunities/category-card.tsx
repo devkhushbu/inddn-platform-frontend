@@ -1,17 +1,24 @@
 import { OpportunityCategory } from "@/data/opportunities";
-import { Card, CardDescription, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { 
-  Globe, Lightbulb, Search, Smartphone, BrainCircuit, MessagesSquare, 
-  AppWindow, Cloud, Building2, ShieldCheck, ShoppingCart, Utensils, 
-  CreditCard, PlaySquare, GraduationCap, Music, Cpu, Rocket, CarFront,
-  type LucideIcon
+  Search, ExternalLink, Plus, Rocket, GitBranch, 
+  Sparkles, Handshake, MonitorPlay, Code, Heart, Coins, Info,
+  Smartphone, BrainCircuit, MessagesSquare, AppWindow, Cloud, Building2, ShieldCheck, ShoppingCart, Utensils, CreditCard, PlaySquare, GraduationCap, Music, Cpu, CarFront, Globe
 } from "lucide-react";
 
 interface CategoryCardProps {
   category: OpportunityCategory;
 }
 
-const CATEGORY_ICONS: Record<string, LucideIcon> = {
+const CATEGORY_ICONS: Record<string, React.ElementType> = {
   "search-engines": Search,
   "smartphone-os": Smartphone,
   "ai-llm": BrainCircuit,
@@ -31,114 +38,158 @@ const CATEGORY_ICONS: Record<string, LucideIcon> = {
   "ev-batteries": CarFront,
 };
 
-const THEMES: Record<string, { glow: string, bg: string, bar: string, text: string, inner: string }> = {
-  "Technology": {
-    glow: "from-blue-500/80",
-    bg: "from-blue-500/5",
-    bar: "from-blue-500 via-blue-400 to-cyan-400",
-    text: "text-blue-600 dark:text-blue-400",
-    inner: "bg-blue-500/10",
-  },
-  "Consumer": {
-    glow: "from-pink-500/80",
-    bg: "from-pink-500/5",
-    bar: "from-pink-500 via-pink-400 to-rose-400",
-    text: "text-pink-600 dark:text-pink-400",
-    inner: "bg-pink-500/10",
-  },
-  "Enterprise": {
-    glow: "from-indigo-500/80",
-    bg: "from-indigo-500/5",
-    bar: "from-indigo-500 via-indigo-400 to-violet-400",
-    text: "text-indigo-600 dark:text-indigo-400",
-    inner: "bg-indigo-500/10",
-  },
-  "Media & Content": {
-    glow: "from-purple-500/80",
-    bg: "from-purple-500/5",
-    bar: "from-purple-500 via-purple-400 to-fuchsia-400",
-    text: "text-purple-600 dark:text-purple-400",
-    inner: "bg-purple-500/10",
-  },
-  "Infrastructure": {
-    glow: "from-emerald-500/80",
-    bg: "from-emerald-500/5",
-    bar: "from-emerald-500 via-emerald-400 to-teal-400",
-    text: "text-emerald-600 dark:text-emerald-400",
-    inner: "bg-emerald-500/10",
-  },
-};
+function getStatusVariant(status: string) {
+  const s = status.toLowerCase();
+  if (s.includes("no") || s.includes("urgent") || s.includes("weak")) return "destructive";
+  if (s.includes("lead") || s.includes("fast")) return "default";
+  return "secondary";
+}
 
 export function CategoryCard({ category }: CategoryCardProps) {
   const Icon = CATEGORY_ICONS[category.id] || Globe;
-  const theme = THEMES[category.filterCategory] || THEMES["Technology"];
+  
+  const foreignPlayers = category.players.filter(p => p.country !== "India");
+  const indiaPlayer = category.players.find(p => p.country === "India") || { country: "India", flag: "🇮🇳", companies: "— None yet" };
 
   return (
-    <Card className={`group relative flex flex-col h-full overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1.5 p-2 gap-2 border-border/60 bg-gradient-to-br ${theme.bg} via-card to-card`}>
+    <Card className="group relative flex flex-col h-full bg-card border border-border/50 rounded-[20px] p-4 sm:p-5 overflow-hidden transition-all duration-500 hover:border-primary/30">
       
-      {/* CTA-Style Top Colorful Bar */}
-      <div className={`absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r ${theme.bar} opacity-70 group-hover:opacity-100 transition-opacity`} />
+      {/* Attractive Glowing Backgrounds on Hover */}
+      <div className="absolute -top-32 -right-32 w-64 h-64 bg-primary/10 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+      <div className="absolute -bottom-32 -left-32 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
 
-      {/* High-Performance Glowing Center Circle (NO BLUR FILTER) */}
-      <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-[radial-gradient(circle_at_center,var(--tw-gradient-stops))] ${theme.glow} to-transparent opacity-40 group-hover:opacity-70 transition-opacity duration-700 pointer-events-none rounded-full z-0`} />
-
-      {/* TOP SECTION: Header + Global Card */}
-      <div className="relative z-10 flex-1 flex flex-col bg-muted/60 border border-border/40 rounded-[1.25rem] p-4 gap-4 transition-colors group-hover:border-border/60 overflow-hidden">
-        
-        {/* Header */}
-        <div className="flex justify-between items-start gap-3 relative z-10">
-          <div className="flex gap-3 w-full">
-            <div className={`shrink-0 mt-0.5 w-11 h-11 flex items-center justify-center rounded-xl border border-border/50 transition-colors bg-background shadow-sm ${theme.inner}`}>
-              <Icon className={`w-5 h-5 ${theme.text}`} strokeWidth={2} />
-            </div>
-            <div className="space-y-1">
-              <CardTitle className={`text-lg font-bold tracking-tight text-foreground transition-colors leading-tight group-hover:${theme.text}`}>
-                {category.title}
-              </CardTitle>
-              <CardDescription className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">
-                {category.subtitle}
-              </CardDescription>
-            </div>
-          </div>
+      {/* Header matching image exactly */}
+      <div className="relative z-10 flex items-start gap-3.5 mb-4">
+        <div className="w-[46px] h-[46px] rounded-xl flex items-center justify-center bg-muted/60 border border-border/80 shrink-0 transition-transform duration-500 group-hover:scale-105">
+          <Icon className="w-5 h-5 text-foreground/80" strokeWidth={1.5} />
         </div>
-
-        {/* Inner Card 1: Global Landscape */}
-        <div className="w-fit max-w-full rounded-xl p-3.5 bg-background border border-border/50 shadow-sm transition-colors mt-auto relative z-10">
-          <div className="flex items-center justify-between gap-4 mb-3">
-             <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1.5 shrink-0">
-              <Globe className="w-3.5 h-3.5" /> Global
-            </h4>
-             <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-widest bg-secondary text-secondary-foreground border border-border/50 shrink-0">
-              {category.status}
-            </span>
+        <div className="flex-1 min-w-0 pt-0.5">
+          <div className="flex items-start justify-between gap-2">
+            <h3 className="font-bold text-base tracking-tight text-foreground truncate">{category.title}</h3>
+            {category.status && (
+              <Badge 
+                variant={getStatusVariant(category.status)} 
+                className="rounded-full px-2.5 h-5 text-[10px] uppercase tracking-wider font-bold shrink-0 border-transparent"
+              >
+                {category.status}
+              </Badge>
+            )}
           </div>
-          
-          {/* Nested Cards (Players) */}
-          <div className="flex flex-wrap gap-2 text-[11px] leading-relaxed font-medium">
-            {category.players.map((p, i) => (
-              <div key={i} className="inline-flex items-center bg-muted/60 border border-border/50 rounded-lg px-2 py-1.5 transition-colors group-hover:border-border">
-                <span 
-                  className="inline-flex items-center justify-center px-1.5 py-0.5 rounded-[4px] bg-background border border-border shadow-sm text-foreground font-bold text-[9px] mr-2.5 uppercase tracking-widest shrink-0" 
-                  title={p.country}
-                >
-                  {p.flag}
-                </span> 
-                <span className="font-semibold text-foreground tracking-tight whitespace-nowrap">{p.companies}</span>
-              </div>
-            ))}
-          </div>
+          <p className="text-sm font-medium text-muted-foreground mt-0.5">{category.subtitle}</p>
         </div>
       </div>
 
-      {/* BOTTOM SECTION: India's Opening */}
-      <div className="w-full bg-muted/60 rounded-[1.25rem] p-4 border border-border/40 transition-colors group-hover:border-border/60 relative z-10 overflow-hidden">
-        <h4 className="text-[11px] font-bold uppercase tracking-widest text-foreground flex items-center gap-2 mb-2 relative z-10">
-          <Lightbulb className={`w-4 h-4 group-hover:animate-pulse ${theme.text}`} strokeWidth={2} />
-          India&apos;s Opening
+      <div className="relative z-10 h-px w-full bg-border/50 mb-4" />
+
+      {/* Global Landscape matching image */}
+      <div className="relative z-10 bg-muted/30 rounded-xl p-3.5 border border-border/50 mb-4 transition-colors group-hover:bg-muted/40">
+        <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-3 flex items-center gap-1.5">
+          <Globe className="w-3.5 h-3.5"/> Global Landscape
         </h4>
-        <p className="text-[11.5px] text-muted-foreground leading-relaxed font-medium relative z-10">
-          {category.indiasOpening}
-        </p>
+        <div className="grid gap-2">
+          {foreignPlayers.map((p, i) => (
+            <div key={i} className="flex items-center gap-2.5 text-xs">
+               <span className="w-6 text-center text-sm" title={p.country}>{p.flag}</span>
+               <span className="font-bold text-foreground w-16 truncate">{p.country === "S. Korea" ? "S. Korea" : p.country}</span>
+               <span className="text-muted-foreground font-medium truncate">{p.companies}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* India Block */}
+      <div className="relative z-10 overflow-hidden rounded-xl border border-primary/20 bg-gradient-to-br from-primary/5 to-transparent p-3.5 mb-4 transition-all duration-300 group-hover:border-primary/40">
+         <div className="absolute -top-3 -right-3 p-3 opacity-5 pointer-events-none rotate-12">
+           <span className="text-6xl">🇮🇳</span>
+         </div>
+         <div className="relative z-10 flex items-center justify-between gap-2 mb-3">
+           <div>
+             <h4 className="font-extrabold text-foreground flex items-center gap-1.5 text-sm">
+               <span className="text-base">🇮🇳</span> India
+             </h4>
+             <p className={`font-semibold text-xs mt-1 ${indiaPlayer.companies.includes("None") ? "text-destructive" : "text-primary"}`}>
+               {indiaPlayer.companies}
+             </p>
+           </div>
+           <Button size="sm" className="rounded-full font-bold px-4 h-8 bg-foreground text-background hover:bg-foreground/90 transition-transform hover:scale-105">
+             <Plus className="w-3.5 h-3.5 mr-1" strokeWidth={3} /> Join
+           </Button>
+         </div>
+         
+         <div className="relative z-10 pt-2.5 border-t border-primary/10 flex flex-wrap items-center gap-x-3 gap-y-2">
+           <span className="text-[10px] font-bold text-primary/80 uppercase tracking-widest shrink-0">Building this?</span>
+           <div className="flex gap-3">
+             <button className="text-xs text-foreground font-bold flex items-center gap-1.5 hover:text-primary transition-colors">
+               <Rocket className="w-3.5 h-3.5 text-primary" /> Post Existing
+             </button>
+             <button className="text-xs text-foreground font-bold flex items-center gap-1.5 hover:text-purple-600 transition-colors">
+               <GitBranch className="w-3.5 h-3.5 text-purple-500" /> Post Ongoing
+             </button>
+           </div>
+         </div>
+      </div>
+
+      {/* Join As Section */}
+      <div className="relative z-10 rounded-xl border border-border/80 bg-gradient-to-br from-blue-500/5 to-purple-500/5 p-3.5 mb-4 overflow-hidden">
+         <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 opacity-80" />
+         <div className="flex flex-col mb-2.5">
+           <h4 className="text-[10px] font-bold uppercase tracking-widest text-foreground flex items-center gap-1.5 mb-1">
+             <Sparkles className="w-3.5 h-3.5 text-blue-500" /> Join As
+           </h4>
+           <span className="text-xs text-muted-foreground italic font-medium">Earn equity & rewards when the project succeeds.</span>
+         </div>
+         
+         <div className="flex flex-wrap gap-1.5">
+           <Badge variant="outline" className="bg-background/80 hover:bg-background border-border font-bold px-2 py-1 text-[10px] transition-all hover:scale-105 cursor-pointer">
+             <Handshake className="w-3 h-3 mr-1.5 text-orange-500" /> Strategic Partner
+           </Badge>
+           <Badge variant="outline" className="bg-background/80 hover:bg-background border-border font-bold px-2 py-1 text-[10px] transition-all hover:scale-105 cursor-pointer">
+             <MonitorPlay className="w-3 h-3 mr-1.5 text-blue-500" /> Project Manager
+           </Badge>
+           <Badge variant="outline" className="bg-background/80 hover:bg-background border-border font-bold px-2 py-1 text-[10px] transition-all hover:scale-105 cursor-pointer">
+             <Code className="w-3 h-3 mr-1.5 text-emerald-500" /> Participator <span className="ml-1 text-muted-foreground">(4)</span>
+           </Badge>
+           <Badge variant="outline" className="bg-background/80 hover:bg-background border-border font-bold px-2 py-1 text-[10px] transition-all hover:scale-105 cursor-pointer">
+             <Heart className="w-3 h-3 mr-1.5 text-red-500" /> Supporter
+           </Badge>
+         </div>
+      </div>
+
+      {/* Investor Section */}
+      <div className="relative z-10 rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-3 mb-2 flex items-center justify-between gap-3 group/investor hover:bg-emerald-500/10 transition-colors">
+         <div className="flex items-center gap-3">
+           <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center shrink-0 group-hover/investor:bg-emerald-500/20 transition-colors">
+             <Coins className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+           </div>
+           <div>
+             <h4 className="font-bold text-foreground text-xs tracking-tight">Support as Investor</h4>
+             <p className="text-[11px] text-muted-foreground font-medium mt-0.5">Fund & earn returns</p>
+           </div>
+         </div>
+         <Button size="sm" variant="outline" className="h-7 rounded-full border-emerald-500/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500 hover:text-white transition-all font-bold px-3 text-xs hover:scale-105">
+           Invest
+         </Button>
+      </div>
+
+      {/* India's Opening - Accordion */}
+      <div className="relative z-10 mt-auto pt-1">
+        <Accordion type="single" collapsible className="w-full">
+          <AccordionItem value="opening" className="border-none">
+            <AccordionTrigger className="hover:no-underline py-2 group/trigger outline-none">
+              <div className="flex items-center gap-2 text-left">
+                <div className="w-6 h-6 rounded-full bg-muted-foreground/10 group-hover/trigger:bg-primary/10 flex items-center justify-center transition-colors shrink-0">
+                  <Info className="w-3.5 h-3.5 text-foreground group-hover/trigger:text-primary transition-colors" />
+                </div>
+                <span className="font-bold text-xs text-muted-foreground group-hover/trigger:text-primary transition-colors">India's Opening</span>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="pb-0 pt-1">
+              <div className="p-3 bg-muted/40 rounded-xl border border-border/50 text-xs text-foreground/80 leading-relaxed font-medium">
+                {category.indiasOpening}
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       </div>
     </Card>
   );
