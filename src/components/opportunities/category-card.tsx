@@ -9,7 +9,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { 
-  Search, ExternalLink, Plus, Rocket, GitBranch, 
+  Search, Plus, Rocket, GitBranch, 
   Sparkles, Handshake, MonitorPlay, Code, Heart, Coins, Info,
   Smartphone, BrainCircuit, MessagesSquare, AppWindow, Cloud, Building2, ShieldCheck, ShoppingCart, Utensils, CreditCard, PlaySquare, GraduationCap, Music, Cpu, CarFront, Globe
 } from "lucide-react";
@@ -180,7 +180,7 @@ export function CategoryCard({ category }: CategoryCardProps) {
                 <div className="w-6 h-6 rounded-full bg-muted-foreground/10 group-hover/trigger:bg-primary/10 flex items-center justify-center transition-colors shrink-0">
                   <Info className="w-3.5 h-3.5 text-foreground group-hover/trigger:text-primary transition-colors" />
                 </div>
-                <span className="font-bold text-xs text-muted-foreground group-hover/trigger:text-primary transition-colors">India's Opening</span>
+                <span className="font-bold text-xs text-muted-foreground group-hover/trigger:text-primary transition-colors">India&apos;s Opening</span>
               </div>
             </AccordionTrigger>
             <AccordionContent className="pb-0 pt-1">
