@@ -2,17 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTheme } from "next-themes";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import {
-  User,
-  Tag,
   Search,
-  IndianRupee,
-  Hammer,
-  Rocket,
-  Users,
-  Star,
-  LayoutDashboard,
   X,
   Edit2
 } from "lucide-react";
@@ -66,15 +59,15 @@ export function AppsLauncher({ open, onOpenChange }: AppsLauncherProps) {
 
   // Favorites data matching the uploaded design colors and icons
   const favorites: AppItem[] = [
-    { name: "Account", url: "#", bgColor: "bg-white dark:bg-white/95 border border-neutral-200/80 dark:border-white/10 text-neutral-800 dark:text-neutral-900", textColor: "text-neutral-800 dark:text-neutral-900", letter: "A", icon: <User className="w-5.5 h-5.5" /> },
-    { name: "IndianBrand", url: "#", bgColor: "bg-white dark:bg-white/95 border border-neutral-200/80 dark:border-white/10 text-neutral-800 dark:text-neutral-900", textColor: "text-neutral-800 dark:text-neutral-900", letter: "IB", icon: <Tag className="w-5.5 h-5.5" /> },
-    { name: "Gap Finder", url: "#", bgColor: "bg-white dark:bg-white/95 border border-neutral-200/80 dark:border-white/10 text-neutral-800 dark:text-neutral-900", textColor: "text-neutral-800 dark:text-neutral-900", letter: "GF", icon: <Search className="w-5.5 h-5.5" /> },
-    { name: "INDDN Fund", url: "#", bgColor: "bg-white dark:bg-white/95 border border-neutral-200/80 dark:border-white/10 text-neutral-800 dark:text-neutral-900", textColor: "text-neutral-800 dark:text-neutral-900", letter: "IF", icon: <IndianRupee className="w-5.5 h-5.5" /> },
-    { name: "Builder Hub", url: "#", bgColor: "bg-white dark:bg-white/95 border border-neutral-200/80 dark:border-white/10 text-neutral-800 dark:text-neutral-900", textColor: "text-neutral-800 dark:text-neutral-900", letter: "BH", icon: <Hammer className="w-5.5 h-5.5" /> },
-    { name: "Launch", url: "#", bgColor: "bg-white dark:bg-white/95 border border-neutral-200/80 dark:border-white/10 text-neutral-800 dark:text-neutral-900", textColor: "text-neutral-800 dark:text-neutral-900", letter: "L", icon: <Rocket className="w-5.5 h-5.5" /> },
-    { name: "Network", url: "#", bgColor: "bg-white dark:bg-white/95 border border-neutral-200/80 dark:border-white/10 text-neutral-800 dark:text-neutral-900", textColor: "text-neutral-800 dark:text-neutral-900", letter: "N", icon: <Users className="w-5.5 h-5.5" /> },
-    { name: "Mentors", url: "#", bgColor: "bg-white dark:bg-white/95 border border-neutral-200/80 dark:border-white/10 text-neutral-800 dark:text-neutral-900", textColor: "text-neutral-800 dark:text-neutral-900", letter: "M", icon: <Star className="w-5.5 h-5.5" /> },
-    { name: "Dashboard", url: "#", bgColor: "bg-white dark:bg-white/95 border border-neutral-200/80 dark:border-white/10 text-neutral-800 dark:text-neutral-900", textColor: "text-neutral-800 dark:text-neutral-900", letter: "D", icon: <LayoutDashboard className="w-5.5 h-5.5" /> }
+    { name: "Account", url: "#", bgColor: "bg-white dark:bg-white/95 border border-neutral-200/80 dark:border-white/10 text-neutral-800 dark:text-neutral-900", textColor: "text-neutral-800 dark:text-neutral-900", letter: "A", logoUrl: "/acoount.png" },
+    { name: "IndianBrand", url: "#", bgColor: "bg-white dark:bg-white/95 border border-neutral-200/80 dark:border-white/10 text-neutral-800 dark:text-neutral-900", textColor: "text-neutral-800 dark:text-neutral-900", letter: "IB", logoUrl: "/indian-brand.png" },
+    { name: "Gap Finder", url: "#", bgColor: "bg-white dark:bg-white/95 border border-neutral-200/80 dark:border-white/10 text-neutral-800 dark:text-neutral-900", textColor: "text-neutral-800 dark:text-neutral-900", letter: "GF", logoUrl: "/gap-finder.png" },
+    { name: "INDDN Fund", url: "#", bgColor: "bg-white dark:bg-white/95 border border-neutral-200/80 dark:border-white/10 text-neutral-800 dark:text-neutral-900", textColor: "text-neutral-800 dark:text-neutral-900", letter: "IF", logoUrl: "/inddn-fund.png" },
+    { name: "Builder Hub", url: "#", bgColor: "bg-white dark:bg-white/95 border border-neutral-200/80 dark:border-white/10 text-neutral-800 dark:text-neutral-900", textColor: "text-neutral-800 dark:text-neutral-900", letter: "BH", logoUrl: "/builder-hub.png" },
+    { name: "Launch", url: "#", bgColor: "bg-white dark:bg-white/95 border border-neutral-200/80 dark:border-white/10 text-neutral-800 dark:text-neutral-900", textColor: "text-neutral-800 dark:text-neutral-900", letter: "L", logoUrl: "/launch.png" },
+    { name: "Network", url: "#", bgColor: "bg-white dark:bg-white/95 border border-neutral-200/80 dark:border-white/10 text-neutral-800 dark:text-neutral-900", textColor: "text-neutral-800 dark:text-neutral-900", letter: "N", logoUrl: "/network.png" },
+    { name: "Mentors", url: "#", bgColor: "bg-white dark:bg-white/95 border border-neutral-200/80 dark:border-white/10 text-neutral-800 dark:text-neutral-900", textColor: "text-neutral-800 dark:text-neutral-900", letter: "M", logoUrl: "/mentors.png" },
+    { name: "Dashboard", url: "#", bgColor: "bg-white dark:bg-white/95 border border-neutral-200/80 dark:border-white/10 text-neutral-800 dark:text-neutral-900", textColor: "text-neutral-800 dark:text-neutral-900", letter: "D", logoUrl: "/dashboard.png" }
   ];
 
   // Indian Apps data with real Google favicon API brand logo URLs
@@ -209,8 +202,7 @@ export function AppsLauncher({ open, onOpenChange }: AppsLauncherProps) {
                       "hover:-translate-y-0.5 hover:shadow-sm active:translate-y-0 active:scale-95",
                       isActive
                         ? "bg-accent border-border/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]"
-                        : "border-transparent",
-                      "hover:bg-accent/60 hover:border-border active:bg-accent/80"
+                        : "border-transparent"
                     )}
                   >
                     <AppIcon app={app} isDark={isDark} />
@@ -248,8 +240,7 @@ export function AppsLauncher({ open, onOpenChange }: AppsLauncherProps) {
                   rel="noopener noreferrer"
                   className={cn(
                     "flex flex-col items-center justify-center gap-1 p-2 w-full max-w-[86px] aspect-square rounded-2xl text-center group mx-auto transition-all duration-300 border border-transparent select-none cursor-pointer",
-                    "hover:-translate-y-0.5 hover:shadow-sm active:translate-y-0 active:scale-95",
-                    "hover:bg-accent/60 hover:border-border active:bg-accent/80"
+                    "hover:-translate-y-0.5 hover:shadow-sm active:translate-y-0 active:scale-95"
                   )}
                 >
                   <AppIcon app={app} isDark={isDark} />
@@ -339,19 +330,27 @@ function AppIcon({ app, isDark }: { app: AppItem; isDark: boolean }) {
   }
 
   if (app.logoUrl && !error) {
+    const isLocalLogo = app.logoUrl.startsWith("/");
     return (
       <div 
         className={cn(
-          "w-11 h-11 rounded-2xl flex items-center justify-center p-2 transition-all duration-300 group-hover:scale-105 group-hover:shadow-[0_6px_15px_var(--icon-glow)] shrink-0 border",
-          isDark ? "bg-white/95 border-white/10" : "bg-white border-border/80"
+          "rounded-2xl flex items-center justify-center transition-all duration-300 group-hover:scale-105 group-hover:shadow-[0_6px_15px_var(--icon-glow)] shrink-0",
+          isLocalLogo ? "w-14 h-14" : "w-11 h-11",
+          !isLocalLogo && "p-2 border",
+          !isLocalLogo && (isDark ? "bg-white/95 border-white/10" : "bg-white border-border/80")
         )}
         style={glowStyle}
       >
-        <img
+        <Image
           src={app.logoUrl}
           alt={`${app.name} Brand Logo`}
           onError={() => setError(true)}
-          className="w-7 h-7 object-contain select-none pointer-events-none"
+          className={cn(
+            "object-contain select-none pointer-events-none",
+            isLocalLogo ? "w-14 h-14" : "w-7 h-7"
+          )}
+          width={isLocalLogo ? 56 : 28}
+          height={isLocalLogo ? 56 : 28}
           loading="lazy"
         />
       </div>
